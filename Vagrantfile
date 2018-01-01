@@ -22,7 +22,7 @@ Vagrant.configure("2") do |config|
 
   $provisioningscript = <<SCRIPT
 cd /home/ubuntu/
-sudo apt-get remove docker docker-engine docker.io
+sudo apt-get remove docker docker-engine docker.io || true
 sudo apt-get update
 sudo apt-get install apt-transport-https ca-certificates curl software-properties-common
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
@@ -31,7 +31,7 @@ sudo apt-get update
 sudo apt-get install docker-ce
 sudo docker run hello-world
 sudo apt-get install docker-compose -y
-sudo apt remove nodejs npm
+sudo apt remove nodejs npm || true
 curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -
 sudo apt-get install -y nodejs
 
@@ -45,17 +45,24 @@ git clone https://github.com/pebble/pebblejs.git
 
 
 cd /home/ubuntu/cloudpebble-composed
-# Change in cloudpebble-composed\docker-compose.yml IP addess to address of your Docker install by default 172.17.0.1
 sed -i 's/10.0.2.15/172.17.0.1/g' docker-compose.yml
-# Change in cloudpebble-qemu-controller\Dockerfile ENV FIRMWARE_VERSION 3.11 replace with ENV FIRMWARE_VERSION 4.3
-sed -i 's/ENV FIRMWARE_VERSION 3.11/ENV FIRMWARE_VERSION 4.3/g' cloudpebble-qemu-controller
+sed -i 's/ENV FIRMWARE_VERSION 3.11/ENV FIRMWARE_VERSION 4.3/g' cloudpebble-qemu-controller/Dockerfile
 # Then open a terminal and cd to cloudpebble-composed dir.
 
+chmod u+x dev_setup.sh
 #TODO need to update node version, nodejs gpg keys?
+sed -i 's/NODE_VERSION=4.2.3/NODE_VERSION=4.7.0/g' cloudpebble/Dockerfile
+sed -i '/DD8F2338BAE7501E3DD5AC78C273792F7D83545D \\/a \
+    C4F0DFFF4E8C1A8236409D08E73BC641CC11F4C8 \\ \
+    B9AE9905FFD7803F25714661B63B535A4C206CA9 \\ \
+    56730D5401028683275BD23C23EFEFE93C4CFFFE \\ \
+    77984A986EBC2AA786BC0F66B01FBB92821C587A \\ ' cloudpebble/Dockerfile
 sudo ./dev_setup.sh
 SCRIPT
 
-
+  config.vm.provision "shell", run: "once" do |s|
+    s.inline= $provisioningscript
+  end
 
   # Always run docker-compose up on vagrant up
   config.vm.provision "shell", run: "always" do |s|
