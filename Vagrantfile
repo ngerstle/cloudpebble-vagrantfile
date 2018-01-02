@@ -53,11 +53,8 @@ sed -i 's/ENV FIRMWARE_VERSION 3.11/ENV FIRMWARE_VERSION 4.3/g' cloudpebble-qemu
 chmod u+x dev_setup.sh
 #TODO need to update node version, nodejs gpg keys?
 sed -i 's/NODE_VERSION=4.2.3/NODE_VERSION=4.7.0/g' cloudpebble/Dockerfile
-sed -i '/DD8F2338BAE7501E3DD5AC78C273792F7D83545D \\/a \
-    C4F0DFFF4E8C1A8236409D08E73BC641CC11F4C8 \\ \
-    B9AE9905FFD7803F25714661B63B535A4C206CA9 \\ \
-    56730D5401028683275BD23C23EFEFE93C4CFFFE \\ \
-    77984A986EBC2AA786BC0F66B01FBB92821C587A \\ ' cloudpebble/Dockerfile
+echo "adding GPG keys"
+sed -i 's/DD8F2338BAE7501E3DD5AC78C273792F7D83545D/DD8F2338BAE7501E3DD5AC78C273792F7D83545D C4F0DFFF4E8C1A8236409D08E73BC641CC11F4C8 B9AE9905FFD7803F25714661B63B535A4C206CA9 56730D5401028683275BD23C23EFEFE93C4CFFFE 77984A986EBC2AA786BC0F66B01FBB92821C587A/g'  cloudpebble/Dockerfile
 sudo ./dev_setup.sh
 SCRIPT
 
@@ -67,7 +64,7 @@ SCRIPT
 
   # Always run docker-compose up on vagrant up
   config.vm.provision "shell", run: "always" do |s|
-    s.inline = "sudo docker-compose -f /home/ubuntu/pebblecloud/docker-compose.yml up -d"
+    s.inline = "cd /home/ubuntu/cloudpebble-composed && sudo docker-compose up -d"
   end
 
 
