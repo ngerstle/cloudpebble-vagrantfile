@@ -12,6 +12,12 @@ with inline provisioning is done as a learning exercise and a favor to my mother
 - run `$ vagrant up`
 - go to `localhost:8080` in a browser.
 
+# To restart from scratch:
+This will destroy any data you have 'saved' in the site- username/password, files, projects, etc!
+
+- `$ vagrant destroy` (in the folder containing the vagrantfile)
+- `$ vagrant up`
+
 # Changing/info
 
 The port forwarding and VM allocations (memory, CPU, etc) are done in `config.vm.provider "virtualbox"` section. This will need to be redone for providers other than virtualbox.
